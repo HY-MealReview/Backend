@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.contrib.auth import update_session_auth_hash
 
@@ -10,7 +10,7 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-# 1. 사용자 등록 (회원가입)
+# 사용자 등록 (회원가입)
 class UserRegistrationView(APIView):
     permission_classes = [AllowAny]  # 누구나 접근 가능
 
@@ -22,7 +22,7 @@ class UserRegistrationView(APIView):
             return Response({"message": "User created successfully."}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# 2. 로그인한 사용자의 정보 조회
+# 로그인한 사용자의 정보 조회
 class UserDetailView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]  # 인증된 사용자만 접근 가능
@@ -33,8 +33,18 @@ class UserDetailView(APIView):
             "student_id": user.student_id,
             "nickname": user.nickname,
         }, status=status.HTTP_200_OK)
+    
+# 전체 사용자 정보 조회
+class UserListView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAdminUser]  # 관리자만 접근 가능
 
-# 3. 로그인한 사용자의 비밀번호 변경
+    def get(self, request):
+        users = User.objects.all()
+        serializer = UserRegistrationSerializer(users, many=True)
+        return Response(serializer.data)
+
+# 로그인한 사용자의 비밀번호 변경
 class ChangePasswordView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]  # 인증된 사용자만 접근 가능
@@ -57,7 +67,7 @@ class ChangePasswordView(APIView):
 
         return Response({"message": "Password changed successfully"}, status=status.HTTP_200_OK)
 
-# 4. 로그인한 사용자의 닉네임 변경
+# 로그인한 사용자의 닉네임 변경
 class ChangeNicknameView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]  # 인증된 사용자만 접근 가능
@@ -74,3 +84,13 @@ class ChangeNicknameView(APIView):
         user.save()
 
         return Response({"message": "Nickname changed successfully"}, status=status.HTTP_200_OK)
+    
+# 로그인한 사용자의 탈퇴
+class UserDeleteView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]  # 인증된 사용자만 접근 가능
+
+    def delete(self, request):
+        user = request.user  # 요청한 사용자
+        user.delete()  # 사용자 삭제
+        return Response({"message": "User account deleted successfully"}, status=status.HTTP_204_NO_CONTENT)

@@ -18,6 +18,10 @@ class CustomUserManager(BaseUserManager) :
 
         return self.create_user(student_id, password, **extra_fields)
     
+    # superuser
+    # Student id : 0000000000
+    # password : admin0000
+    
 def validate_student_id(value) :
     if len(value) != 10 or not value.isdigit() :
         raise ValidationError('Student ID must be exactly 10 digits.')
