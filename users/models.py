@@ -1,6 +1,6 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.core.exceptions import ValidationError
-from django.db import models
+from django.db import models, IntegrityError
 
 # Create your models here.
 class CustomUserManager(BaseUserManager) :
@@ -9,7 +9,10 @@ class CustomUserManager(BaseUserManager) :
             raise ValueError('The student ID must be set')
         user = self.model(student_id=student_id, **extra_fields)
         user.set_password(password)
-        user.save(using=self.db)
+        try:
+            user.save(using=self.db)
+        except IntegrityError :
+            raise ValidationError('이 닉네임은 이미 사용 중입니다')
         return user
     
     def create_superuser(self, student_id, password=None, **extra_fields):
@@ -32,7 +35,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin) :
         unique=True, 
         validators=[validate_student_id]  # 10자리 숫자 검증
     )
-    nickname = models.CharField(max_length=50)
+    nickname = models.CharField(max_length=50, unique=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(auto_now_add=True)
