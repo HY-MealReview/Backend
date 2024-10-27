@@ -27,5 +27,7 @@ urlpatterns = [
     path('users/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     # 리프레시 토큰으로 새로운 액세스 토큰 발급
     path('users/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('', include('users.urls'),)
+    path('', include('users.urls')),
+    path('', include('restaurants.urls')),
+    path('', include('foods.urls')),
 ]

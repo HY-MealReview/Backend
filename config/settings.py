@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'users.apps.UsersConfig',
+    'restaurants.apps.RestaurantsConfig',
+    'foods.apps.FoodsConfig',
 ]
 
 # Django REST Framework 설정
