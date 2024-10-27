@@ -5,9 +5,9 @@ from .models import Category, Food
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ['name']
+        fields = ['id','name']
 
 class FoodSerializer(serializers.ModelSerializer):
     class Meta:
         model = Food
-        fields = ['name', 'category', 'restaurant']
+        fields = ['id','name', 'category', 'restaurant']
