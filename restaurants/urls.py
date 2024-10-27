@@ -3,8 +3,8 @@ from django.urls import path
 from .views import RestaurantCreateView, MenuCreateView, MenuDetailView
 
 urlpatterns = [
-    path('restaurants/', RestaurantCreateView.as_view(), name='restaurant-create'),
-    path('menus/', MenuCreateView.as_view(), name='menu-create'),
+    path('restaurant/', RestaurantCreateView.as_view(), name='restaurant-create'),
+    path('menu/', MenuCreateView.as_view(), name='menu-create'),
     path('menu-details/', MenuDetailView.as_view(), name='menu-detail'),
 ]
 
