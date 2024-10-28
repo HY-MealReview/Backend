@@ -73,6 +73,7 @@ class FoodByCategoryView(generics.ListAPIView):
 
 # 음식 이름과 식당 이름에 해당하는 음식 조회
 class FoodDetailByNameAndRestaurantView(generics.ListAPIView):
+    queryset = Food.objects.all()
     serializer_class = FoodSerializer
     permission_classes = [permissions.AllowAny]
 
@@ -80,7 +81,7 @@ class FoodDetailByNameAndRestaurantView(generics.ListAPIView):
         food_name = request.query_params.get('food_name')
         restaurant_name = request.query_params.get('restaurant_name')
         if food_name and restaurant_name:
-            foods = self.get_queryset().filter(name=food_name, restaurant__name=restaurant_name)
+            foods = self.queryset.filter(name=food_name, restaurant__name=restaurant_name)
             if foods.exists():
                 serializer = self.get_serializer(foods, many=True)
                 return Response(serializer.data, status=status.HTTP_200_OK)
