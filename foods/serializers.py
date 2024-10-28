@@ -8,6 +8,11 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ['id','name']
 
 class FoodSerializer(serializers.ModelSerializer):
+    category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())  
+
     class Meta:
         model = Food
         fields = ['id','name', 'category', 'restaurant']
+
+    def create(self, validated_data):
+        return Food.objects.create(**validated_data)
