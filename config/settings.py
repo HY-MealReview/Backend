@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+# import os 배포 후에 설정
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,8 +27,15 @@ SECRET_KEY = 'django-insecure-+ludwvf)7td(7skkm*%3nhoi&5b0^1h0!m_-9turtb8ugwtdm&
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+'''
+배포 후에 설정
 
+# ALLOWED_HOSTS 설정 (도메인 혹은 IP)
+ALLOWED_HOSTS = ['yourdomain.com', 'your.server.ip']
+
+# BASE_URL 설정
+BASE_URL = os.getenv('BASE_URL', 'https://yourdomain.com')
+'''
 
 # Application definition
 
@@ -43,6 +51,8 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'restaurants.apps.RestaurantsConfig',
     'foods.apps.FoodsConfig',
+    'recommendations.apps.RecommendationsConfig',
+    # 'ratings.apps.RatingsConfig',
 ]
 
 # Django REST Framework 설정
