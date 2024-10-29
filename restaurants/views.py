@@ -84,3 +84,19 @@ class MenuDetailView(generics.ListAPIView):
         ]
         
         return Response(data)
+
+# 10. 특정 메뉴 ID를 입력하면 해당 메뉴의 정보 출력 (관리자 계정만 가능)
+class MenuDetailByIdView(generics.RetrieveAPIView):
+    queryset = Menu.objects.all()
+    serializer_class = MenuSerializer
+    permission_classes = [permissions.IsAdminUser]  # 관리자 계정만 접근 가능하도록 설정
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()  # Menu 객체 가져오기
+        data = {
+            "id": instance.id,
+            "restaurant": instance.restaurant.name,
+            "date": instance.date,
+            "foods": list(instance.foods.all().values_list('name', flat=True))  # 음식 이름만 리스트로 가져오기
+        }
+        return Response(data)
