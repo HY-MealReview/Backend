@@ -58,32 +58,43 @@ class FoodListView(generics.ListAPIView):
 class FoodByCategoryView(generics.ListAPIView):
     serializer_class = FoodSerializer
     permission_classes = [permissions.AllowAny]
+    queryset = Food.objects.all()  # 기본 쿼리셋 설정
 
     def get(self, request, *args, **kwargs):
         category_name = request.query_params.get('name')
         if category_name:
+            category_name = category_name.rstrip('/')  # 슬래시 제거
             try:
                 category = Category.objects.get(name=category_name)
-                foods = self.get_queryset().filter(category=category)
+                foods = self.queryset.filter(category=category)  # 필터링된 쿼리셋
                 serializer = self.get_serializer(foods, many=True)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             except Category.DoesNotExist:
                 return Response({"detail": "해당 카테고리를 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
         return Response({"detail": "카테고리 이름을 제공해 주세요."}, status=status.HTTP_400_BAD_REQUEST)
 
+
 # 음식 이름과 식당 이름에 해당하는 음식 조회
 class FoodDetailByNameAndRestaurantView(generics.ListAPIView):
-    queryset = Food.objects.all()
     serializer_class = FoodSerializer
     permission_classes = [permissions.AllowAny]
+
+    def get_queryset(self):
+        food_name = self.request.query_params.get('food_name', '').strip('/')
+        restaurant_name = self.request.query_params.get('restaurant_name', '').strip('/')
+        if food_name and restaurant_name:
+            return Food.objects.filter(name=food_name, restaurant__name=restaurant_name)
+        return Food.objects.none()
 
     def get(self, request, *args, **kwargs):
         food_name = request.query_params.get('food_name')
         restaurant_name = request.query_params.get('restaurant_name')
-        if food_name and restaurant_name:
-            foods = self.queryset.filter(name=food_name, restaurant__name=restaurant_name)
-            if foods.exists():
-                serializer = self.get_serializer(foods, many=True)
-                return Response(serializer.data, status=status.HTTP_200_OK)
+        if not (food_name and restaurant_name):
+            return Response({"detail": "음식 이름과 레스토랑 이름을 제공해 주세요."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        foods = self.get_queryset()
+        if not foods.exists():
             return Response({"detail": "해당 음식이나 레스토랑을 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
-        return Response({"detail": "음식 이름과 레스토랑 이름을 제공해 주세요."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        serializer = self.get_serializer(foods, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

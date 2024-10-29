@@ -2,7 +2,7 @@ from django.urls import path
 from .views import (
     RestaurantCreateView, RestaurantUpdateView, RestaurantDeleteView, RestaurantListView,
     MenuCreateView, MenuUpdateView, MenuDeleteView, MenuListView,
-    MenuDetailView, MenuAddFoodView,
+    MenuDetailView,
 )
 
 urlpatterns = [
@@ -17,7 +17,6 @@ urlpatterns = [
     path('menu/all/', MenuListView.as_view(), name='menu-list'),
 
     path('menu/detail/', MenuDetailView.as_view(), name='menu-detail'),  # restaurant와 date는 query_params로 받음
-    path('menu/<int:pk>/addfood/', MenuAddFoodView.as_view(), name='menu-add-food'),
 ]
 
 

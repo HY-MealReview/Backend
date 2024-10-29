@@ -12,10 +12,5 @@ class Menu(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='menus')
     foods = models.ManyToManyField('foods.Food', related_name='menus')  # Food와 다대다 관계
 
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=['date', 'restaurant'], name='unique_menu_per_date_per_restaurant')
-        ]
-
     def __str__(self):
         return f"Menu for {self.restaurant.name} on {self.date}"
