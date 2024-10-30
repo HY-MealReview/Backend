@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     'restaurants.apps.RestaurantsConfig',
     'foods.apps.FoodsConfig',
     'recommendations.apps.RecommendationsConfig',
-    # 'ratings.apps.RatingsConfig',
+    'ratings.apps.RatingsConfig',
 ]
 
 # Django REST Framework 설정

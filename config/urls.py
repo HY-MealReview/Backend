@@ -31,5 +31,5 @@ urlpatterns = [
     path('', include('restaurants.urls')),
     path('', include('foods.urls')),
     path('', include('recommendations.urls')),
-    # path('', include('ratings.urls'),)
+    path('', include('ratings.urls'),)
 ]
