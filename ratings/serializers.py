@@ -1,4 +1,3 @@
-# ratings/serializers.py
 from rest_framework import serializers
 from .models import Rating
 from foods.models import Food
@@ -19,12 +18,13 @@ class RatingSerializer(serializers.ModelSerializer):
         return instance
 
 class FoodRatingSummarySerializer(serializers.ModelSerializer):
+    total_rating = serializers.SerializerMethodField()
     average_rating = serializers.SerializerMethodField()
-    rating_count = serializers.SerializerMethodField()
+    users_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Food
-        fields = ['id', 'name', 'average_rating', 'rating_count']
+        fields = ['id', 'name', 'total_rating', 'average_rating', 'users_count']
 
     def get_average_rating(self, obj):
         ratings = obj.ratings.all()
@@ -33,8 +33,11 @@ class FoodRatingSummarySerializer(serializers.ModelSerializer):
             return total_rating / ratings.count()
         return 0
 
-    def get_rating_count(self, obj):
-        return obj.ratings.count()
+    def get_total_rating(self, obj):
+        return sum(r.rating for r in obj.ratings.all())  
+
+    def get_users_count(self, obj):
+        return obj.ratings.values('user').distinct().count()
 
 class UserFoodRatingsSerializer(serializers.ModelSerializer):
     ratings = RatingSerializer(many=True)

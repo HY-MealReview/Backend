@@ -19,11 +19,15 @@ class RatingUpdateView(generics.UpdateAPIView):
 
 # 3. 로그인된 사용자가 입력한 특정 food의 rating 삭제
 class RatingDeleteView(generics.DestroyAPIView):
-    queryset = Rating.objects.all()
     permission_classes = [permissions.IsAuthenticated]
+    lookup_field = 'food_id' 
 
     def get_queryset(self):
-        return super().get_queryset().filter(user=self.request.user)
+        food_id = self.kwargs.get('food_id') 
+        return Rating.objects.filter(user=self.request.user, food_id=food_id)
+
+    def perform_destroy(self, instance):
+        instance.delete()  
 
 # 4. 로그인된 사용자가 입력한 rating들이 해당되는 food의 정보와 rating 전체 출력
 class UserFoodRatingsView(generics.ListAPIView):
