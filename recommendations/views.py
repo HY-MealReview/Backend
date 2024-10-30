@@ -7,7 +7,8 @@ from restaurants.models import Menu
 from .serializers import (
     RecommendationSerializer, 
     MenuRecommendationCountSerializer, 
-    UserMenuRecommendationSerializer
+    UserMenuRecommendationSerializer,
+    UserMenuRecommendationDetailSerializer
 )
 
 # 1. 특정 메뉴에 대한 추천 추가
@@ -76,3 +77,32 @@ class DeleteRecommendationView(generics.DestroyAPIView):
         except Recommendation.DoesNotExist:
             raise NotFound("해당 메뉴에 대한 추천이 존재하지 않습니다.")
         return recommendation
+
+# 6. 로그인 한 유저가 특정 메뉴에 대한 정보와 추천 여부 출력    
+class UserMenuRecommendationDetailView(generics.RetrieveAPIView):
+    serializer_class = UserMenuRecommendationDetailSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        user = self.request.user
+        menu_id = self.kwargs.get('menu_id')
+
+        try:
+            menu = Menu.objects.get(id=menu_id)
+            # 사용자가 해당 메뉴에 대한 추천을 했는지 확인
+            recommendation = Recommendation.objects.get(user=user, menu=menu)
+            return menu, recommendation
+        except Menu.DoesNotExist:
+            raise NotFound("해당 메뉴를 찾을 수 없습니다.")
+        except Recommendation.DoesNotExist:
+            return menu, None  # 사용자가 추천하지 않았을 경우
+
+    def retrieve(self, request, *args, **kwargs):
+        menu, recommendation = self.get_object()
+        serializer = self.get_serializer(menu)
+
+        # 응답 데이터에 추천 정보를 포함
+        response_data = serializer.data
+        response_data['recommendation'] = recommendation.recommendation if recommendation else None
+
+        return Response(response_data)

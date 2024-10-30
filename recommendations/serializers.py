@@ -17,6 +17,13 @@ class MenuRecommendationCountSerializer(serializers.ModelSerializer):
         model = Menu
         fields = ['menu_id', 'true_count', 'false_count', 'date', 'restaurant']
 
+class UserMenuRecommendationDetailSerializer(serializers.ModelSerializer):
+    recommendation = serializers.BooleanField(source='recommendation.recommendation', default=None)
+    
+    class Meta:
+        model = Menu
+        fields = ['id', 'date', 'restaurant', 'recommendation']
+
 class UserMenuRecommendationSerializer(serializers.ModelSerializer):
     menu = serializers.SerializerMethodField()
 
