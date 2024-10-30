@@ -22,7 +22,7 @@ class CreateRecommendationView(generics.CreateAPIView):
 class MenuRecommendationCountView(generics.RetrieveAPIView):
     serializer_class = MenuRecommendationCountSerializer
     queryset = Menu.objects.all()
-    permission_classes = [AllowAny]  # 로그인 없이 접근 가능
+    permission_classes = [AllowAny]
 
     def retrieve(self, request, *args, **kwargs):
         menu = self.get_object()
@@ -30,14 +30,16 @@ class MenuRecommendationCountView(generics.RetrieveAPIView):
         false_count = Recommendation.objects.filter(menu=menu, recommendation=False).count()
 
         data = {
-            'id': menu.id,
+            'menu_id': menu.id, 
             'true_count': true_count,
             'false_count': false_count,
             'date': menu.date,
-            'restaurant': menu.restaurant.name,
+            'restaurant': menu.restaurant.name  
         }
-        serializer = MenuRecommendationCountSerializer(data)
+        serializer = MenuRecommendationCountSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
         return Response(serializer.data)
+
 
 # 3. 로그인한 유저가 입력한 모든 추천 메뉴 조회
 class UserRecommendationsView(generics.ListAPIView):

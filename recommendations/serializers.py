@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Recommendation
-from restaurants.models import Menu
+from restaurants.models import Menu, Restaurant
 
 class RecommendationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -8,12 +8,14 @@ class RecommendationSerializer(serializers.ModelSerializer):
         fields = ['menu', 'recommendation']
 
 class MenuRecommendationCountSerializer(serializers.ModelSerializer):
+    menu_id = serializers.IntegerField(source='id', read_only=True) 
     true_count = serializers.IntegerField()
     false_count = serializers.IntegerField()
-
+    restaurant = serializers.CharField(source='restaurant.name', read_only=True) 
+    
     class Meta:
         model = Menu
-        fields = ['id', 'true_count', 'false_count', 'date', 'restaurant']
+        fields = ['menu_id', 'true_count', 'false_count', 'date', 'restaurant']
 
 class UserMenuRecommendationSerializer(serializers.ModelSerializer):
     menu = serializers.SerializerMethodField()
