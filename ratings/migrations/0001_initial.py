@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='ratings', to=settings.AUTH_USER_MODEL)),
             ],
             options={
-                'constraints': [models.UniqueConstraint(fields=('user', 'food'), name='unique_user_food_rating'), models.CheckConstraint(condition=models.Q(('rating__gte', 1), ('rating__lte', 10)), name='rating_between_1_and_10')],
+                'constraints': [models.UniqueConstraint(fields=('user', 'food'), name='unique_user_food_rating'), models.CheckConstraint(check=models.Q(('rating__gte', 1), ('rating__lte', 10)), name='rating_between_1_and_10')],
             },
         ),
     ]
