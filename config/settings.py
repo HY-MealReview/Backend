@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-+ludwvf)7td(7skkm*%3nhoi&5b0^1h0!m_-9turtb8ugwtdm&'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['hymeal-aggtgwefdhg9dsfv.koreacentral-01.azurewebsites.net', 'HYmeal.hyericalion.net']
 
