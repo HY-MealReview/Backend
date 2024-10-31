@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-+ludwvf)7td(7skkm*%3nhoi&5b0^1h0!m_-9turtb8ugwtdm&
 DEBUG = True
 
 # BASE_URL 설정
-BASE_URL = os.getenv('https://HYmeal.hyericalion.net', 'https://hymeal-aggtgwefdhg9dsfv.koreacentral-01.azurewebsites.net')
+BASE_URL = os.getenv('BASE_URL', 'https://HYmeal.hyericalion.net')
 
 # Application definition
 
