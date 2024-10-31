@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'foods.apps.FoodsConfig',
     'recommendations.apps.RecommendationsConfig',
     'ratings.apps.RatingsConfig',
+    'corsheaders',
 ]
 
 # Django REST Framework 설정
@@ -68,6 +69,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "https://hyu-mealreview.netlify.app/"
 ]
 
 ROOT_URLCONF = 'config.urls'
