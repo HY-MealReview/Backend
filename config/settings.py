@@ -25,8 +25,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-+ludwvf)7td(7skkm*%3nhoi&5b0^1h0!m_-9turtb8ugwtdm&'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
+ALLOWED_HOSTS = ['hymeal-aggtgwefdhg9dsfv.koreacentral-01.azurewebsites.net']
 # BASE_URL 설정
 BASE_URL = os.getenv('BASE_URL', 'https://HYmeal.hyericalion.net')
 
@@ -46,6 +47,7 @@ INSTALLED_APPS = [
     'foods.apps.FoodsConfig',
     'recommendations.apps.RecommendationsConfig',
     'ratings.apps.RatingsConfig',
+    'corsheaders',
 ]
 
 # Django REST Framework 설정
@@ -69,6 +71,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+]
+
+# 프론트엔드 도메인
+CORS_ALLOWED_ORIGINS = [
+    "https://hyu-mealreview.netlify.app/"
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -98,7 +106,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
@@ -150,3 +158,5 @@ AUTH_USER_MODEL = 'users.CustomUser'
 # 정적 파일 및 미디어 파일 설정
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+SECURE_SSL_REDIRECT = True
