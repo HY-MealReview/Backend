@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
-# import os 배포 후에 설정
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,15 +27,8 @@ SECRET_KEY = 'django-insecure-+ludwvf)7td(7skkm*%3nhoi&5b0^1h0!m_-9turtb8ugwtdm&
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-'''
-배포 후에 설정
-
-# ALLOWED_HOSTS 설정 (도메인 혹은 IP)
-ALLOWED_HOSTS = ['yourdomain.com', 'your.server.ip']
-
 # BASE_URL 설정
-BASE_URL = os.getenv('BASE_URL', 'https://yourdomain.com')
-'''
+BASE_URL = os.getenv('https://HYmeal.hyericalion.net', 'https://hymeal-aggtgwefdhg9dsfv.koreacentral-01.azurewebsites.net')
 
 # Application definition
 
@@ -153,3 +146,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CustomUser model 설정
 AUTH_USER_MODEL = 'users.CustomUser'
+
+# 정적 파일 및 미디어 파일 설정
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
