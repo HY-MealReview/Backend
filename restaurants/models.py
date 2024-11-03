@@ -9,7 +9,7 @@ class Restaurant(models.Model):
 
 class Menu(models.Model):
     TIME_CHOICES = [
-        ('아침', '아침'),
+        ('조식', '조식'),
         ('중식', '중식'),
         ('석식', '석식'),
     ]
