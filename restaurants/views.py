@@ -78,6 +78,7 @@ class MenuDetailView(generics.ListAPIView):
                 "id": menu.id,
                 "restaurant": menu.restaurant.name,
                 "date": menu.date,
+                "time": menu.time, 
                 "foods": list(menu.foods.all().values_list('name', flat=True))
             }
             for menu in queryset
@@ -97,6 +98,80 @@ class MenuDetailByIdView(generics.RetrieveAPIView):
             "id": instance.id,
             "restaurant": instance.restaurant.name,
             "date": instance.date,
+            "time": menu.time, 
             "foods": list(instance.foods.all().values_list('name', flat=True))  # 음식 이름만 리스트로 가져오기
         }
+        return Response(data)
+
+# 11. 식당 이름과 날짜, 타임으로 메뉴 조회
+class MenuSearchView(generics.ListAPIView):
+    queryset = Menu.objects.all()
+    serializer_class = MenuSerializer
+
+    def get_queryset(self):
+        restaurant_name = self.request.query_params.get('restaurant')
+        menu_date = self.request.query_params.get('date')
+        time = self.request.query_params.get('time')
+
+        if time and time.endswith('/'):
+            time = time.rstrip('/')
+
+        if restaurant_name and menu_date and time:
+            return self.queryset.filter(
+                restaurant__name=restaurant_name,
+                date=menu_date,
+                time=time
+            )
+        return Menu.objects.none()
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        if not queryset.exists():
+            return Response({"detail": "해당 레스토랑의 메뉴가 없습니다."}, status=status.HTTP_404_NOT_FOUND)
+
+        data = [
+            {
+                "id": menu.id,
+                "restaurant": menu.restaurant.name,
+                "date": menu.date,
+                "time": menu.time,  # 타임 필드 추가
+                "foods": list(menu.foods.all().values_list('name', flat=True))
+            }
+            for menu in queryset
+        ]
+        
+        return Response(data)
+
+# 12. 날짜와 타임으로 메뉴 조회
+class MenuSearchByTimeView(generics.ListAPIView):
+    queryset = Menu.objects.all()
+    serializer_class = MenuSerializer
+
+    def get_queryset(self):
+        menu_date = self.request.query_params.get('date')
+        time = self.request.query_params.get('time')
+
+        if time and time.endswith('/'):
+            time = time.rstrip('/')
+
+        if menu_date and time:
+            return self.queryset.filter(date=menu_date, time=time)
+        return Menu.objects.none()
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        if not queryset.exists():
+            return Response({"detail": "해당 메뉴가 없습니다."}, status=status.HTTP_404_NOT_FOUND)
+
+        data = [
+            {
+                "id": menu.id,
+                "restaurant": menu.restaurant.name,
+                "date": menu.date,
+                "time": menu.time,  # 타임 필드 추가
+                "foods": list(menu.foods.all().values_list('name', flat=True))
+            }
+            for menu in queryset
+        ]
+        
         return Response(data)

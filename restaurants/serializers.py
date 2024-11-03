@@ -13,7 +13,7 @@ class MenuSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Menu
-        fields = ['id', 'date', 'restaurant', 'foods', 'photo']
+        fields = ['id', 'date', 'restaurant', 'foods', 'photo', 'time']
 
     def create(self, validated_data):
         # 유효성 검사된 데이터에서 foods를 분리
