@@ -9,10 +9,11 @@ class RestaurantSerializer(serializers.ModelSerializer):
 
 class MenuSerializer(serializers.ModelSerializer):
     foods = serializers.PrimaryKeyRelatedField(many=True, queryset=Food.objects.all())  # 수정: foods를 쓰기 가능하게
+    photo = serializers.ImageField(required=False)
 
     class Meta:
         model = Menu
-        fields = ['id', 'date', 'restaurant', 'foods']
+        fields = ['id', 'date', 'restaurant', 'foods', 'photo']
 
     def create(self, validated_data):
         # 유효성 검사된 데이터에서 foods를 분리

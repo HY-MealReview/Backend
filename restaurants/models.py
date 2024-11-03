@@ -11,6 +11,7 @@ class Menu(models.Model):
     date = models.DateField()
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='menus')
     foods = models.ManyToManyField('foods.Food', related_name='menus')  # Food와 다대다 관계
+    photo = models.ImageField(upload_to='menu_photos/', null=True, blank=True)
 
     def __str__(self):
         return f"Menu for {self.restaurant.name} on {self.date}"
