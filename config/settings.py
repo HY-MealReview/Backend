@@ -75,8 +75,17 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     "https://hyu-mealreview.netlify.app/",
     "http://hyu-mealreview.netlify.app/",
+    "https://hyu-mealreview.netlify.app",
+    "http://hyu-mealreview.netlify.app",
+    "https://localhost:5173/", 
+    "http://localhost:5173/", 
     "https://localhost:5173", 
     "http://localhost:5173", 
+    "https://44.223.183.118/"
+    "http://44.223.183.118/"
+    "https://44.223.183.118"
+    "http://44.223.183.118"
+
 ]
 
 ROOT_URLCONF = 'config.urls'
