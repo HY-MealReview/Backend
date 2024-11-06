@@ -72,7 +72,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-'''
 CORS_ALLOWED_ORIGINS = [
     "https://hyu-mealreview.netlify.app/",
     "http://hyu-mealreview.netlify.app/",
@@ -95,7 +94,6 @@ CORS_ALLOWED_HEADERS = [
 ]
 
 CORS_ALLOW_CREDENTIALS = True
-'''
 
 ROOT_URLCONF = 'config.urls'
 
