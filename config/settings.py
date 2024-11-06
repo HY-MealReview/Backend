@@ -72,6 +72,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+'''
 CORS_ALLOWED_ORIGINS = [
     "https://hyu-mealreview.netlify.app/",
     "http://hyu-mealreview.netlify.app/",
@@ -94,6 +95,7 @@ CORS_ALLOWED_HEADERS = [
 ]
 
 CORS_ALLOW_CREDENTIALS = True
+'''
 
 ROOT_URLCONF = 'config.urls'
 
@@ -163,7 +165,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICILES_DIRS = [os.path.join(BASE_DIR, "static")]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
