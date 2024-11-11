@@ -1,5 +1,9 @@
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from django.shortcuts import get_object_or_404
+from restaurants.models import Restaurant, Menu
+from ratings.models import Rating
 from .models import Category, Food
 from .serializers import CategorySerializer, FoodSerializer
 
@@ -96,5 +100,37 @@ class FoodDetailByNameAndRestaurantView(generics.ListAPIView):
         if not foods.exists():
             return Response({"detail": "해당 음식이나 레스토랑을 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
         
+        serializer = self.get_serializer(foods, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+# 특정 식당 메뉴의 음식들에 매긴 평점들 모두 출력
+class FoodRatingsListView(generics.ListAPIView):
+    serializer_class = FoodSerializer
+    permission_classes = [IsAuthenticated]  # 로그인한 사용자만 접근 가능
+
+    def get_queryset(self):
+        # URL에서 쿼리 파라미터로 가져오기
+        restaurant_name = self.request.query_params.get('restaurant_name', '').strip('/')
+        date = self.request.query_params.get('date', '').strip('/')
+        time = self.request.query_params.get('time', '').strip('/')
+
+        # restaurant_name을 통해 Restaurant 객체 가져오기
+        restaurant = get_object_or_404(Restaurant, name=restaurant_name)
+        
+        # 특정 restaurant, date, time에 따른 메뉴에 포함된 음식 조회
+        menu = Menu.objects.filter(restaurant=restaurant, date=date, time=time).first()
+        
+        if menu:
+            # 메뉴에 포함된 음식들을 가져오기
+            return menu.foods.all()  # 음식 목록을 반환
+        return Food.objects.none()  # 해당하는 메뉴가 없으면 빈 쿼리셋 반환
+
+    def get(self, request, *args, **kwargs):
+        # GET 요청 처리
+        foods = self.get_queryset()
+        if not foods.exists():
+            return Response({"detail": "해당 날짜와 시간에 대한 메뉴가 존재하지 않습니다."}, status=status.HTTP_404_NOT_FOUND)
+        
+        # 각 음식에 대한 id, name, ratings 포함한 데이터를 반환
         serializer = self.get_serializer(foods, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
