@@ -1,11 +1,13 @@
 from rest_framework import generics, permissions, status
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
+from urllib.parse import unquote
 from restaurants.models import Restaurant, Menu
 from ratings.models import Rating
 from .models import Category, Food
-from .serializers import CategorySerializer, FoodSerializer
+from .serializers import CategorySerializer, FoodSerializer, FoodWithRatingsSummarySerializer, MenuWithFoodsSerializer
 
 # 카테고리 생성
 class CategoryCreateView(generics.CreateAPIView):
@@ -103,7 +105,7 @@ class FoodDetailByNameAndRestaurantView(generics.ListAPIView):
         serializer = self.get_serializer(foods, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
-# 특정 식당 메뉴의 음식들에 매긴 평점들 모두 출력
+# 로그인 한 유저가 특정 식당 메뉴의 음식들에 매긴 평점들 모두 출력
 class FoodRatingsListView(generics.ListAPIView):
     serializer_class = FoodSerializer
     permission_classes = [IsAuthenticated]  # 로그인한 사용자만 접근 가능
@@ -134,3 +136,38 @@ class FoodRatingsListView(generics.ListAPIView):
         # 각 음식에 대한 id, name, ratings 포함한 데이터를 반환
         serializer = self.get_serializer(foods, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+# 특정 식당의 어떤 메뉴에 속하는 음식들에 매긴 평점 출력  
+class FoodWithRatingsSummaryByRestaurantMenuView(APIView):
+    def get(self, request, *args, **kwargs):
+        # URL에서 restaurant_name과 menu_date를 받아옵니다.
+        restaurant_name = unquote(self.kwargs['restaurant_name'])
+        menu_date = self.kwargs['menu_date']
+        
+        # 주어진 restaurant_name에 해당하는 restaurant를 찾습니다.
+        restaurant = get_object_or_404(Restaurant, name=restaurant_name)
+        
+        # restaurant와 menu_date에 해당하는 메뉴들을 가져옵니다.
+        menus = Menu.objects.filter(restaurant=restaurant, date=menu_date)
+        
+        if not menus.exists():
+            return Response({"detail": "No menus found."}, status=status.HTTP_404_NOT_FOUND)
+        
+        # 여러 메뉴에 해당하는 음식들을 가져옵니다.
+        food_queryset = Food.objects.filter(menus__in=menus).prefetch_related('ratings')
+        
+        # 음식들을 그룹화해서 반환할 데이터 준비
+        result = []
+        for menu in menus:
+            menu_foods = food_queryset.filter(menus=menu)
+            food_data = FoodWithRatingsSummarySerializer(menu_foods, many=True).data
+            
+            result.append({
+                'menu_date': menu.date,
+                'restaurant_name': restaurant.name,
+                'time': menu.time,
+                'foods': food_data
+            })
+        
+        return Response(result)

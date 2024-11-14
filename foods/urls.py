@@ -4,7 +4,7 @@ from .views import (
     FoodByCategoryView, FoodDetailByNameAndRestaurantView,
     CategoryUpdateView, FoodUpdateView,
     CategoryDeleteView, FoodDeleteView,
-    FoodRatingsListView,
+    FoodRatingsListView, FoodWithRatingsSummaryByRestaurantMenuView
 )
 
 urlpatterns = [
@@ -22,6 +22,8 @@ urlpatterns = [
     path('food/search/bynamerest/', FoodDetailByNameAndRestaurantView.as_view(), name='food-detail-by-name-and-restaurant'),  # 특정 Food 정보 조회
     
     path('food/ratings/', FoodRatingsListView.as_view(), name='food-ratings-list'),  # 음식 평점 조회
+
+    path('restaurants/<str:restaurant_name>/<str:menu_date>/ratings/', FoodWithRatingsSummaryByRestaurantMenuView.as_view(), name='food-with-ratings-summary-by-menu'),
 ]
 
 # 카테고리로 음식 검색 : /food/search/bycategory/?name=카테고리이름
