@@ -3,9 +3,11 @@ from .models import Rating
 from foods.models import Food
 
 class RatingSerializer(serializers.ModelSerializer):
+    food_name = serializers.CharField(source='food.name', read_only=True)  # 'food.name'을 출력하도록 설정
+
     class Meta:
         model = Rating
-        fields = ['id', 'user', 'food', 'rating', 'created_at']  # created_at 필드 추가
+        fields = ['id', 'user', 'food_name', 'rating', 'created_at']  # food_name을 포함
         read_only_fields = ['user', 'created_at']
 
     def create(self, validated_data):
@@ -40,8 +42,32 @@ class FoodRatingSummarySerializer(serializers.ModelSerializer):
         return obj.ratings.values('user').distinct().count()
 
 class UserFoodRatingsSerializer(serializers.ModelSerializer):
-    ratings = RatingSerializer(many=True)
+    # ratings는 RatingSerializer로 처리하여 음식별 평가 정보 출력
+    ratings = serializers.SerializerMethodField()
+    # menus는 Food와 관련된 Menu 객체를 출력
+    menus = serializers.SerializerMethodField()
+    # 카테고리 이름
+    category_name = serializers.CharField(source='category.name')
+    # 식당 이름
+    restaurant_name = serializers.CharField(source='restaurant.name')
 
     class Meta:
         model = Food
-        fields = ['id', 'name', 'ratings']
+        fields = ['id', 'name', 'category_name', 'restaurant_name', 'ratings', 'menus']
+
+    # ratings 필드는 로그인한 유저의 평가만 가져오는 메소드
+    def get_ratings(self, obj):
+        user = self.context.get('request').user  # 로그인한 유저 가져오기
+        # 해당 음식에 대한 유저의 평점만 필터링
+        ratings = obj.ratings.filter(user=user)
+        return RatingSerializer(ratings, many=True).data
+
+    # menus 필드는 관련된 Menu 객체들을 가져오는 메소드
+    def get_menus(self, obj):
+        # 해당 음식과 관련된 메뉴 정보들을 반환
+        menus = obj.menus.all()
+        return [{
+            'date': menu.date,
+            'time': menu.time,
+            'restaurant_name': menu.restaurant.name
+        } for menu in menus]
