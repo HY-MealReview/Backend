@@ -31,3 +31,47 @@ class FoodSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return Food.objects.create(**validated_data)
+
+
+class FoodRatingSummarySerializer(serializers.ModelSerializer):
+    total_rating = serializers.SerializerMethodField()
+    average_rating = serializers.SerializerMethodField()
+    users_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Food
+        fields = ['id', 'name', 'total_rating', 'average_rating', 'users_count']
+
+    def get_average_rating(self, obj):
+        ratings = obj.ratings.all()
+        if ratings.exists():
+            total_rating = sum(r.rating for r in ratings)
+            return total_rating / ratings.count()
+        return 0
+
+    def get_total_rating(self, obj):
+        return sum(r.rating for r in obj.ratings.all())
+
+    def get_users_count(self, obj):
+        return obj.ratings.values('user').distinct().count()
+
+class FoodWithRatingsSummarySerializer(FoodRatingSummarySerializer):
+    category_name = serializers.CharField(source='category.name', read_only=True)  # 카테고리 이름
+    restaurant_name = serializers.CharField(source='restaurant.name', read_only=True)  # 레스토랑 이름
+    menu_date = serializers.DateField(source='menu.date', read_only=True)  # 메뉴 날짜
+    menu_time = serializers.CharField(source='menu.time', read_only=True)  # 메뉴 시간
+
+    class Meta:
+        model = Food
+        fields = FoodRatingSummarySerializer.Meta.fields + ['category_name', 'restaurant_name', 'menu_date', 'menu_time']
+
+
+# 메뉴에 속하는 음식들을 그룹화하는 Serializer
+class MenuWithFoodsSerializer(serializers.Serializer):
+    menu_date = serializers.DateField()
+    restaurant_name = serializers.CharField()
+    time = serializers.CharField()
+    foods = FoodWithRatingsSummarySerializer(many=True)
+
+    class Meta:
+        fields = ['menu_date', 'restaurant_name', 'time', 'foods']
