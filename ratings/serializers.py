@@ -5,8 +5,8 @@ from foods.models import Food
 class RatingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Rating
-        fields = ['id', 'user', 'food', 'rating']
-        read_only_fields = ['user']
+        fields = ['id', 'user', 'food', 'rating', 'created_at']  # created_at 필드 추가
+        read_only_fields = ['user', 'created_at']
 
     def create(self, validated_data):
         validated_data['user'] = self.context['request'].user
