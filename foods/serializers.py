@@ -12,7 +12,7 @@ class CategorySerializer(serializers.ModelSerializer):
 class RatingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Rating
-        fields = ['rating']  # 평점만 출력      
+        fields = ['rating', 'created_at']  # 평점만 출력      
 
 class RestaurantSerializer(serializers.ModelSerializer):
     class Meta:
