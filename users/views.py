@@ -1,9 +1,12 @@
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError as DRFValidationError
+from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.contrib.auth import update_session_auth_hash
+from .models import validate_student_id
 
 from .serializers import UserRegistrationSerializer
 from django.contrib.auth import get_user_model
@@ -94,3 +97,45 @@ class UserDeleteView(APIView):
         user = request.user  # 요청한 사용자
         user.delete()  # 사용자 삭제
         return Response({"message": "User account deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+
+
+# student_id 중복 확인 API
+class StudentIDCheckView(APIView):
+    permission_classes = [AllowAny]  # 누구나 접근 가능
+
+    def post(self, request, *args, **kwargs):
+        student_id = request.data.get('student_id')
+        
+        # student_id 값이 없을 경우 에러 반환
+        if not student_id:
+            return Response({"ERROR": "학번 입력이 필요합니다."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # student_id 형식 검증 (10자리 숫자)
+        try:
+            validate_student_id(student_id)
+        except DjangoValidationError as e:
+            # Django의 ValidationError를 DRF의 ValidationError로 변환하여 JSON 응답을 보냄
+            raise DRFValidationError({"error": e.messages})
+
+        # student_id 중복 여부 확인
+        if User.objects.filter(student_id=student_id).exists():
+            return Response({"message": "입력하신 학번이 이미 존재합니다."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        return Response({"message": "이 학번은 가입이 가능합니다."}, status=status.HTTP_200_OK)
+
+# nickname 중복 확인 API
+class NicknameCheckView(APIView):
+    permission_classes = [AllowAny]  # 누구나 접근 가능
+
+    def post(self, request, *args, **kwargs):
+        nickname = request.data.get('nickname')
+        
+        # nickname 값이 없을 경우 에러 반환
+        if not nickname:
+            return Response({"error": "닉네임 입력이 필요합니다."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # nickname 중복 여부 확인
+        if User.objects.filter(nickname=nickname).exists():
+            return Response({"message": "입력하신 닉네임은 이미 존재합니다."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        return Response({"message": "이 닉네임은 가입이 가능합니다."}, status=status.HTTP_200_OK)

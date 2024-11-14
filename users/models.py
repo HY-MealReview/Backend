@@ -27,7 +27,7 @@ class CustomUserManager(BaseUserManager) :
     
 def validate_student_id(value) :
     if len(value) != 10 or not value.isdigit() :
-        raise ValidationError('Student ID must be exactly 10 digits.')
+        raise ValidationError('ERROR : 학번은 10자리의 숫자여야만 합니다.')
 
 class CustomUser(AbstractBaseUser, PermissionsMixin) :
     student_id = models.CharField(
