@@ -84,14 +84,6 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 
-CORS_ALLOWED_HEADERS = [
-    'authorization',
-    'content-type',
-    'accept',
-]
-
-CORS_ALLOW_CREDENTIALS = True
-
 
 ROOT_URLCONF = 'config.urls'
 
