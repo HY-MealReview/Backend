@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-+ludwvf)7td(7skkm*%3nhoi&5b0^1h0!m_-9turtb8ugwtdm&
 # 개발 때엔 True
 DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["localhost", "44.223.183.118", "hyu-mealreview.netlify.app"]
 
 # Application definition
 
@@ -75,19 +75,14 @@ MIDDLEWARE = [
 
 
 CORS_ALLOWED_ORIGINS = [
-    "https://hyu-mealreview.netlify.app/",
-    "http://hyu-mealreview.netlify.app/",
+    "http://localhost:5173",
+    "https://localhost:5173",
+    "http://44.223.183.118",
+    "https://44.223.183.118",
     "https://hyu-mealreview.netlify.app",
     "http://hyu-mealreview.netlify.app",
-    "https://localhost:5173/", 
-    "http://localhost:5173/", 
-    "https://localhost:5173", 
-    "http://localhost:5173", 
-    "https://44.223.183.118/",
-    "http://44.223.183.118/",
-    "https://44.223.183.118",
-    "http://44.223.183.118",
 ]
+
 
 CORS_ALLOWED_HEADERS = [
     'authorization',
