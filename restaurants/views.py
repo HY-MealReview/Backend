@@ -79,6 +79,7 @@ class MenuDetailView(generics.ListAPIView):
                 "restaurant": menu.restaurant.name,
                 "date": menu.date,
                 "time": menu.time, 
+                "photo": menu.photo.url if menu.photo else None,  # photo 필드 추가
                 "foods": list(menu.foods.all().values_list('name', flat=True))
             }
             for menu in queryset
@@ -98,7 +99,8 @@ class MenuDetailByIdView(generics.RetrieveAPIView):
             "id": instance.id,
             "restaurant": instance.restaurant.name,
             "date": instance.date,
-            "time": menu.time, 
+            "time": instance.time, 
+            "photo": instance.photo.url if menu.photo else None,
             "foods": list(instance.foods.all().values_list('name', flat=True))  # 음식 이름만 리스트로 가져오기
         }
         return Response(data)
@@ -135,6 +137,7 @@ class MenuSearchView(generics.ListAPIView):
                 "restaurant": menu.restaurant.name,
                 "date": menu.date,
                 "time": menu.time,  # 타임 필드 추가
+                "photo": menu.photo.url if menu.photo else None,
                 "foods": list(menu.foods.all().values_list('name', flat=True))
             }
             for menu in queryset
@@ -169,6 +172,7 @@ class MenuSearchByTimeView(generics.ListAPIView):
                 "restaurant": menu.restaurant.name,
                 "date": menu.date,
                 "time": menu.time,  # 타임 필드 추가
+                "photo": menu.photo.url if menu.photo else None,
                 "foods": list(menu.foods.all().values_list('name', flat=True))
             }
             for menu in queryset
