@@ -164,6 +164,7 @@ class FoodWithRatingsSummaryByRestaurantMenuView(APIView):
             food_data = FoodWithRatingsSummarySerializer(menu_foods, many=True).data
             
             result.append({
+                'menu_id': menu.id,
                 'menu_date': menu.date,
                 'restaurant_name': restaurant.name,
                 'time': menu.time,

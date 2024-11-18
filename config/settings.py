@@ -88,7 +88,6 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 
-
 ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [

@@ -68,10 +68,11 @@ class FoodWithRatingsSummarySerializer(FoodRatingSummarySerializer):
 
 # 메뉴에 속하는 음식들을 그룹화하는 Serializer
 class MenuWithFoodsSerializer(serializers.Serializer):
+    menu_id = serializers.IntegerField()
     menu_date = serializers.DateField()
     restaurant_name = serializers.CharField()
     time = serializers.CharField()
     foods = FoodWithRatingsSummarySerializer(many=True)
 
     class Meta:
-        fields = ['menu_date', 'restaurant_name', 'time', 'foods']
+        fields = ['menu_id', 'menu_date', 'restaurant_name', 'time', 'foods']
