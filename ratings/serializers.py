@@ -4,10 +4,11 @@ from foods.models import Food
 
 class RatingSerializer(serializers.ModelSerializer):
     food_name = serializers.CharField(source='food.name', read_only=True)  # 'food.name'을 출력하도록 설정
+    food = serializers.PrimaryKeyRelatedField(queryset=Food.objects.all(), write_only=True)  # food ID를 받아 처리
 
     class Meta:
         model = Rating
-        fields = ['id', 'user', 'food_name', 'rating', 'created_at']  # food_name을 포함
+        fields = ['id', 'user', 'food', 'food_name', 'rating', 'created_at']  # food_name을 포함
         read_only_fields = ['user', 'created_at']
 
     def create(self, validated_data):
