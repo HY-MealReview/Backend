@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
+import logging
+import json
 from pathlib import Path
 from datetime import timedelta
 import os
@@ -30,8 +32,63 @@ DEBUG = False
 
 ALLOWED_HOSTS = ["localhost", "44.223.183.118", "hyu-mealreview.netlify.app", "hymeal.site", "www.hymeal.site"]
 
-# Application definition
+# CustomLogglyFormatter 클래스 정의
 
+
+class CustomLogglyFormatter(logging.Formatter):
+    def format(self, record):
+        try:
+            # format 문자열을 직접 구성
+            formatted_message = f'[HY-MealReview] {record.levelname} {self.formatTime(record)} {record.getMessage()}'
+
+            loggly_data = {
+                'message': formatted_message,
+                'level': record.levelname,
+                'timestamp': self.formatTime(record),
+            }
+            return json.dumps(loggly_data)
+        except Exception as e:
+            return f"Logging format error: {str(e)}"
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '[HY-MealReview] %(levelname)s %(asctime)s %(message)s',
+        },
+    },
+    'handlers': {
+        'loggly': {
+            'level': 'INFO',
+            'class': 'logging.handlers.HTTPHandler',
+            'host': 'logs-01.loggly.com',
+            'url': '/inputs/f1aa5f13-e707-49af-a993-e7a53be9ce6b/tag/http/',
+            'method': 'POST',
+            'formatter': 'verbose',
+        },
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['loggly', 'console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'meomeoknyang': {
+            'handlers': ['loggly', 'console'],
+            'level': 'INFO',
+            'propagate': True,
+        }
+    },
+}
+
+# Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
