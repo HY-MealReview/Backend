@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-+ludwvf)7td(7skkm*%3nhoi&5b0^1h0!m_-9turtb8ugwtdm&
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # 개발 때엔 True
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["localhost", "44.223.183.118", "hyu-mealreview.netlify.app", "hymeal.site", "www.hymeal.site"]
 
@@ -45,8 +45,9 @@ INSTALLED_APPS = [
     'restaurants.apps.RestaurantsConfig',
     'foods.apps.FoodsConfig',
     'recommendations.apps.RecommendationsConfig',
+    'feedbacks.apps.FeedbacksConfig',
     'ratings.apps.RatingsConfig',
-    'corsheaders',
+    # 'corsheaders',
 ]
 
 # Django REST Framework 설정
@@ -64,7 +65,7 @@ SIMPLE_JWT = {
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
+    # 'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -73,7 +74,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-
+'''
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "https://localhost:5173",
@@ -86,7 +87,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://hyu-mealreview.netlify.app",
     "https://hyu-mealreview.netlify.app",
 ]
-
+'''
 
 ROOT_URLCONF = 'config.urls'
 

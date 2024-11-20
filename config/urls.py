@@ -17,7 +17,8 @@ urlpatterns = [
     path('', include('restaurants.urls')),
     path('', include('foods.urls')),
     path('', include('recommendations.urls')),
-    path('', include('ratings.urls'),)
+    path('', include('ratings.urls')),
+    path('', include('feedbacks.urls'))
 ]
 
 # 미디어 파일 제공 설정 추가 (DEBUG 모드에서만)
